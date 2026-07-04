@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="P2P Music Network & File Share Node - Neobrutalism Interface" />
+  <title>P2P Music Network &amp; File Share Node</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets (modular) -->
+  <link rel="stylesheet" href="css/core.css" />
+  <link rel="stylesheet" href="css/ui.css" />
+  <link rel="stylesheet" href="css/upload.css" />
+</head>
+<body>
+
+  <!-- ============ HEADER / NAVBAR ============ -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="header-icon">🎵</div>
+        <div>
+          <h1 class="header-title" id="node-title">Node-01: Music Vault</h1>
+          <p class="header-subtitle">P2P Music Network &amp; File Share</p>
+        </div>
+      </div>
+      <div class="status-badge" id="status-badge">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Connected to Master Node</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-wrapper">
+    <div class="grid-main">
+
+      <!-- ============ CONTROL PANEL ============ -->
+      <div class="neo-card animate-in delay-1" id="control-panel">
+        <div class="card-header">
+          <div class="card-header-icon" style="background: #EBF5FF;">🔍</div>
+          <h2>Control Panel</h2>
+          <span class="badge" style="background: var(--clr-yellow);">Search</span>
+        </div>
+        <form class="search-form" id="search-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="search-input">Nama File</label>
+            <input
+              type="text"
+              id="search-input"
+              class="neo-input"
+              placeholder="Contoh: laguA.mp3"
+              autocomplete="off"
+            />
+          </div>
+          <button type="button" class="neo-btn neo-btn-primary" id="search-btn" onclick="Search.handleSearch()">
+            🔎 Search Node
+          </button>
+        </form>
+        <div class="quick-chips">
+          <span class="chip" onclick="Search.quickSearch('laguA.mp3')">laguA.mp3</span>
+          <span class="chip" onclick="Search.quickSearch('laguB.mp3')">laguB.mp3</span>
+          <span class="chip" onclick="Search.quickSearch('remix.wav')">remix.wav</span>
+          <span class="chip" onclick="Search.quickSearch('podcast.mp3')">podcast.mp3</span>
+        </div>
+      </div>
+
+      <!-- ============ NETWORK STATS ============ -->
+      <div class="neo-card animate-in delay-2" id="stats-card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background: #FFF0F0;">📊</div>
+          <h2>Network Stats</h2>
+          <span class="badge" style="background: var(--clr-green);">Live</span>
+        </div>
+        <div class="stats-bar">
+          <div class="stat-item">
+            <div class="stat-value" id="stat-peers">5</div>
+            <div class="stat-label">Active Peers</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-files">128</div>
+            <div class="stat-label">Shared Files</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-latency">24ms</div>
+            <div class="stat-label">Avg Latency</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ RADIO CARD (Audio Player) ============ -->
+      <div class="neo-card animate-in delay-5" id="radio-card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background: #F0E6FF;">🎧</div>
+          <h2>Audio Player</h2>
+          <span class="badge player-bar-badge" id="player-status" style="background: #F5F5F5;">Idle</span>
+        </div>
+        <div class="radio-card-body">
+
+          <!-- Spinning Vinyl (left) -->
+          <div class="vinyl-wrapper">
+            <div class="vinyl" id="album-art">
+              <div class="vinyl-groove vinyl-groove-1"></div>
+              <div class="vinyl-groove vinyl-groove-2"></div>
+              <div class="vinyl-groove vinyl-groove-3"></div>
+              <div class="vinyl-label">
+                <span class="vinyl-label-text">♪</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Track Info (center) -->
+          <div class="track-info-bar">
+            <div class="track-name-bar" id="track-name">Tidak ada lagu diputar</div>
+            <div class="track-source-bar" id="track-source">Pilih lagu dari hasil pencarian</div>
+          </div>
+
+          <!-- Audio Visualizer Histogram (right) -->
+          <div class="visualizer-wrapper">
+            <canvas id="visualizer-canvas" width="200" height="80"></canvas>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ============ SYSTEM LOG ============ -->
+      <div class="terminal-card animate-in delay-6" id="log-card">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="terminal-title">System Log — Console</span>
+          <div class="terminal-actions">
+            <button class="terminal-clear-btn" onclick="Logger.clear()">Clear</button>
+          </div>
+        </div>
+        <div class="terminal-body" id="log-body">
+          <!-- Log lines inserted here -->
+        </div>
+      </div>
+
+      <!-- ============ MUSIC LIBRARY ============ -->
+      <div class="neo-card grid-full animate-in delay-3" id="library-card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background: #F0E6FF;">🎶</div>
+          <h2>Music Library</h2>
+          <span class="badge" id="library-count" style="background: #F0E6FF;">0 Files</span>
+          <button class="neo-btn neo-btn-upload-sm" id="upload-trigger-btn" title="Upload Music">
+            📤 Upload
+          </button>
+        </div>
+        <input type="file" id="upload-input" class="upload-input" accept="audio/*" multiple />
+
+        <!-- Upload progress area (hidden by default) -->
+        <div class="upload-progress-area" id="upload-progress-area" style="display:none;">
+          <div class="upload-file-list" id="upload-file-list"></div>
+          <div class="upload-stats" id="upload-stats" style="display:none;"></div>
+          <div class="upload-actions">
+            <button class="neo-btn neo-btn-purple neo-btn-sm" id="upload-btn" disabled>
+              🚀 Upload
+            </button>
+            <button class="neo-btn neo-btn-danger neo-btn-sm" id="upload-clear-btn" disabled>
+              🗑️ Hapus
+            </button>
+          </div>
+        </div>
+
+        <!-- Music Library List -->
+        <div class="library-list" id="library-list">
+          <div class="library-empty" id="library-empty">
+            <div class="empty-state-icon">📂</div>
+            <div class="empty-state-text">Belum ada musik di server</div>
+            <div class="empty-state-sub">Upload musik untuk melihatnya di sini</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ RESULTS TABLE ============ -->
+      <div class="neo-card grid-full animate-in delay-4" id="results-card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background: #FFF8DC;">📋</div>
+          <h2>Search Results</h2>
+          <span class="badge" id="results-count" style="background: #EBF5FF;">0 Results</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="neo-table" id="results-table">
+            <thead>
+              <tr>
+                <th>Nama File</th>
+                <th>Pemilik (Node ID)</th>
+                <th>Ukuran</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="results-body">
+              <!-- Dynamic rows inserted here -->
+            </tbody>
+          </table>
+          <div class="empty-state" id="empty-state">
+            <div class="empty-state-icon">🎶</div>
+            <div class="empty-state-text">Belum ada hasil pencarian</div>
+            <div class="empty-state-sub">Cari file musik untuk melihat hasilnya di sini</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PLAYLISTS ============ -->
+      <div class="neo-card grid-full animate-in delay-5" id="playlists-card">
+        <div class="card-header">
+          <div class="card-header-icon" style="background: #E8F5E9;">🎧</div>
+          <h2>Playlists</h2>
+          <span class="badge" id="playlist-count" style="background: #E8F5E9;">0 Playlists</span>
+        </div>
+        
+        <div class="playlist-create-area">
+          <input type="text" id="playlist-name-input" class="neo-input" placeholder="Nama Playlist Baru..." />
+          <button class="neo-btn neo-btn-green" id="playlist-create-btn">+ Buat Playlist</button>
+        </div>
+
+        <div class="playlist-list" id="playlist-list">
+          <div class="library-empty" id="playlist-empty">
+            <div class="empty-state-icon">💿</div>
+            <div class="empty-state-text">Belum ada playlist</div>
+            <div class="empty-state-sub">Jadilah yang pertama membuat playlist!</div>
+          </div>
+          <!-- Playlist items injected here -->
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>P2P Music Network Node &bull; Vanilla JS + Java Socket Backend &bull; 2026</p>
+    </footer>
+  </main>
+
+  <!-- ============ FIXED BOTTOM AUDIO PLAYER BAR ============ -->
+  <div class="player-bar" id="player-bar">
+    <div class="player-bar-inner">
+      
+      <!-- Track Info in Bottom Bar -->
+      <div class="bar-track-info">
+        <div class="bar-track-name" id="bar-track-name">Tidak ada lagu diputar</div>
+        <div class="bar-track-node" id="bar-track-node">-</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="audio-container-bar">
+        <audio controls id="audio-player" preload="none" crossorigin="anonymous">
+          <source id="audio-source" src="" type="audio/mpeg" />
+          Browser Anda tidak mendukung tag audio.
+        </audio>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts (modular, order matters) -->
+  <script src="js/core.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/playlist.js"></script>
+
+</body>
+</html>
+

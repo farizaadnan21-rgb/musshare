@@ -1,0 +1,6 @@
+*.class
+uploads/
+playlists.dat
+*.owner
+Project_MusicVault_Clean.zip
+.DS_Store
