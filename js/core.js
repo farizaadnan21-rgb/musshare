@@ -28,6 +28,10 @@
 
 const Logger = (() => {
   let logBody = null;
+  /**
+   * Menginisialisasi Node P2P saat web pertama kali dimuat.
+   * Membaca/membuat Node-ID, menyiapkan UI, dan menjalankan detak jantung (ping).
+   */
 
   function init() {
     logBody = document.getElementById('log-body');
@@ -176,6 +180,9 @@ const Player = (() => {
   }
 
   /** Initialize Web Audio API context and connect analyser (once). */
+  /**
+   * Menginisialisasi Web Audio API untuk membuat visualizer (animasi grafik suara).
+   */
   function initAudioContext() {
     if (audioCtxInitialized) return;
     try {
@@ -198,6 +205,9 @@ const Player = (() => {
   }
 
   /** Draw the real-time frequency histogram. */
+  /**
+   * Menggambar (render) grafik frekuensi audio yang merespons musik secara real-time ke atas canvas.
+   */
   function drawVisualizer() {
     if (animFrameId) cancelAnimationFrame(animFrameId);
     
@@ -262,6 +272,9 @@ const Player = (() => {
   }
 
   /** Draw idle / static bars when no music is playing. */
+  /**
+   * Menampilkan grafik statis saat tidak ada musik yang sedang diputar.
+   */
   function drawIdleBars() {
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
@@ -286,6 +299,10 @@ const Player = (() => {
    * @param {string} filename - File name to play.
    * @param {string} nodeId   - Node ID that holds the file.
    * @param {string} [objectUrl] - Optional blob URL for locally uploaded files.
+   */
+  /**
+   * Memutar lagu dari server. Fungsi ini yang dipanggil saat pengguna menekan tombol Play.
+   * Menangani antarmuka player (album art berputar, judul, streaming status).
    */
   function play(filename, nodeId, objectUrl) {
     if (currentPlayingFile === filename) {
@@ -366,6 +383,10 @@ const Stats = (() => {
     fetchStats();
     statsInterval = setInterval(fetchStats, 5_000);
   }
+  /**
+   * Mengirim sinyal 'ping' atau heartbeat ke server secara berkala.
+   * Memberi tahu server bahwa Node browser ini sedang menyala dan aktif.
+   */
 
   async function sendHeartbeat() {
     try {
@@ -385,6 +406,9 @@ const Stats = (() => {
       // Silently fail — stats will show stale data
     }
   }
+  /**
+   * Mengambil data statistik terbaru (seperti latency, jumlah peer) dari server untuk diperbarui di UI.
+   */
 
   async function fetchStats() {
     try {

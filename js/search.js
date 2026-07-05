@@ -7,6 +7,11 @@ const Search = (() => {
   // ---- DOM References (lazy-init) ----
   let searchInput, resultsBody, resultsCount, emptyState;
 
+  /**
+   * Fungsi init() dipanggil saat halaman web selesai dimuat (DOMContentLoaded).
+   * Tugasnya adalah mencari elemen HTML (input, tabel hasil pencarian)
+   * dan menambahkan event listener agar pengguna bisa mencari dengan menekan 'Enter'.
+   */
   function init() {
     searchInput  = document.getElementById('search-input');
     resultsBody  = document.getElementById('results-body');
@@ -22,7 +27,11 @@ const Search = (() => {
     });
   }
 
-  /** Execute search from the input field. */
+  /**
+   * Fungsi handleSearch() dipanggil saat pengguna menekan tombol Search atau Enter.
+   * Tugasnya mengambil teks (keyword) dari input pencarian, memvalidasinya (tidak boleh kosong),
+   * lalu memanggil fungsi searchFile() untuk mencari lagu tersebut ke Server.
+   */
   function handleSearch() {
     const filename = searchInput.value.trim();
     if (!filename) {
@@ -33,13 +42,22 @@ const Search = (() => {
     searchFile(filename);
   }
 
-  /** Quick search by clicking a chip. */
+  /** 
+   * Fungsi quickSearch() adalah jalan pintas untuk mencari lagu saat pengguna
+   * mengklik "chip" nama lagu di bawah kotak pencarian.
+   */
   function quickSearch(filename) {
     searchInput.value = filename;
     handleSearch();
   }
 
-  /** Core search logic — Fuzzy search via Indexing Server */
+  /**
+   * Fungsi searchFile(keyword) adalah inti dari pencarian P2P (Fuzzy Search).
+   * Tugasnya:
+   * 1. Mengirim permintaan HTTP GET ke endpoint `/search` di Server Java.
+   * 2. Menerima daftar hasil pencarian dari berbagai Node/Komputer.
+   * 3. Membuat elemen baris tabel <tr> secara dinamis untuk menampilkan setiap hasil lagu ke layar.
+   */
   async function searchFile(keyword) {
     const esc = Logger.escapeHTML;
     Logger.append(`Mencari "${keyword}" di jaringan (fuzzy search)...`, 'info');

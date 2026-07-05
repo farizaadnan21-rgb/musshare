@@ -70,6 +70,10 @@ const Upload = (() => {
 
   // ==================== LIBRARY (Server Files) ====================
 
+  /**
+   * Mengambil daftar lagu yang ada di Server Java secara berkala.
+   * Endpoint: /list_files
+   */
   async function fetchLibrary() {
     try {
       const res = await fetch(`${window.AppConfig.BACKEND_URL}/list_files`);
@@ -81,6 +85,11 @@ const Upload = (() => {
     }
   }
 
+  /**
+   * Menggambar (render) daftar lagu hasil dari fetchLibrary() ke layar.
+   * Fungsi ini juga bertugas memunculkan tombol "Hapus" hanya jika 
+   * Node-ID di browser cocok dengan pemilik file tersebut (f.uploadedBy).
+   */
   function renderLibrary(files) {
     if (libraryCount) {
       libraryCount.textContent = files.length + ' File' + (files.length !== 1 ? 's' : '');
@@ -99,22 +108,18 @@ const Upload = (() => {
     // Build library HTML
     let html = '';
     files.forEach(f => {
-      const sizeStr = formatSize(f.size);
-      const dateStr = new Date(f.modified).toLocaleDateString('id-ID', {
-        day: 'numeric', month: 'short', year: 'numeric'
-      });
+      const sizeStr = (f.size / (1024 * 1024)).toFixed(2) + ' MB';
+      const d = new Date(f.modified);
+      const dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
       // Owner tags
       let ownersHtml = '';
       if (f.owners && f.owners.length > 0) {
-        ownersHtml = f.owners.map(o =>
-          `<span class="owner-tag">${Logger.escapeHTML(o)}</span>`
-        ).join('');
+        ownersHtml = f.owners.slice(0, 3).map(o => `<span class="library-node-badge">${Logger.escapeHTML(o)}</span>`).join('');
+        if (f.owners.length > 3) ownersHtml += `<span class="library-node-badge">+${f.owners.length - 3}</span>`;
       }
 
       const escapedName = Logger.escapeHTML(f.name);
-      const musicUrl = `${window.AppConfig.BACKEND_URL}/music/${encodeURIComponent(f.name)}`;
-
       const isOwner = f.uploadedBy === window.AppConfig.NODE_ID;
 
       html += `
@@ -148,6 +153,10 @@ const Upload = (() => {
     libraryList.insertAdjacentHTML('beforeend', html);
   }
 
+  /**
+   * Menghapus lagu dari Server. Mengirim HTTP DELETE dan 
+   * Header X-Node-Id agar server dapat memverifikasi kepemilikan file.
+   */
   async function deleteServerFile(filename) {
     if (!confirm(`Yakin ingin menghapus file "${filename}" dari server?`)) return;
     try {

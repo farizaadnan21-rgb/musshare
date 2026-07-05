@@ -8,6 +8,9 @@ const Playlist = (() => {
   let playlistListEl, playlistEmptyEl, playlistCountEl;
   let createBtn, createNameInput;
   let viewingPlaylist = null; // null = not viewing, otherwise playlist object
+  /**
+   * Inisialisasi awal untuk memuat daftar playlist.
+   */
 
   function init() {
     playlistListEl  = document.getElementById('playlist-list');
@@ -32,6 +35,9 @@ const Playlist = (() => {
   let knownViewers = {}; // { playlistId: [viewerIds...] }
 
   // ==================== LIST PLAYLISTS ====================
+  /**
+   * Mengambil semua daftar playlist yang tersimpan di Server.
+   */
 
   async function fetchPlaylists() {
     // Don't refresh if we're viewing a playlist detail
@@ -46,6 +52,9 @@ const Playlist = (() => {
       // Silently fail
     }
   }
+  /**
+   * Menggambar kartu-kartu playlist ke layar berdasarkan data dari Server.
+   */
 
   function renderPlaylists(playlists) {
     playlistCountEl.textContent = playlists.length + ' Playlist' + (playlists.length !== 1 ? 's' : '');
@@ -106,6 +115,9 @@ const Playlist = (() => {
   }
 
   // ==================== CREATE PLAYLIST ====================
+  /**
+   * Mengirim perintah ke Server untuk membuat Playlist baru.
+   */
 
   async function createPlaylist() {
     const name = createNameInput.value.trim();
@@ -175,6 +187,9 @@ const Playlist = (() => {
       openPlaylist(viewingPlaylist.id, true);
     }
   }, 5000);
+  /**
+   * Menampilkan daftar lagu apa saja yang ada di dalam sebuah Playlist.
+   */
 
   function renderPlaylistDetail(pl, isMine) {
     const myNode = window.AppConfig.NODE_ID;

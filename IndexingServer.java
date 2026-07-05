@@ -267,6 +267,11 @@ public class IndexingServer {
         String string3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.out.printf("[%s] [%-6s] %s%n", string3, string, string2);
     }
+    /**
+     * Handler ini bertugas untuk mencari lagu (Search). 
+     * Melakukan iterasi pada struktur data Map untuk mencari file yang cocok
+     * secara parsial (fuzzy match) dan mengembalikan daftar nama file beserta Node pemiliknya.
+     */
 
     static class SearchHandler
     implements HttpHandler {
@@ -367,6 +372,11 @@ public class IndexingServer {
             return string;
         }
     }
+    /**
+     * Handler ini digunakan untuk mendaftarkan/mencatat file milik node lain 
+     * ke dalam memori server tanpa mengupload file fisiknya.
+     * Berguna untuk simulasi index P2P dari node eksternal.
+     */
 
     static class RegisterHandler
     implements HttpHandler {
@@ -398,6 +408,11 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler ini mengembalikan data statistik jaringan secara real-time,
+     * seperti jumlah peer aktif, jumlah file yang dibagikan, 
+     * dan latensi rata-rata dari seluruh Node yang terhubung.
+     */
 
     static class StatsHandler
     implements HttpHandler {
@@ -455,6 +470,11 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler ini bertugas sebagai sinyal detak jantung (ping). 
+     * Dipanggil berkala oleh browser pengguna untuk memberitahu server 
+     * bahwa Node pengguna masih aktif dan online.
+     */
 
     static class HeartbeatHandler
     implements HttpHandler {
@@ -484,6 +504,11 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler ini menangani proses unggah (Upload) file multipart dari browser.
+     * Selain menyimpan file .mp3, handler ini juga membuat file metadata kepemilikan
+     * berakhiran .owner yang menyimpan Node-ID si pengupload.
+     */
 
     static class UploadHandler
     implements HttpHandler {
@@ -537,6 +562,11 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler ini bertugas untuk menampilkan seluruh daftar lagu 
+     * yang benar-benar tersimpan secara fisik di folder server (uploads/).
+     * Menambahkan informasi Node-ID pemilik pada hasil JSON.
+     */
 
     static class ListFilesHandler
     implements HttpHandler {
@@ -595,6 +625,11 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler ini bertugas untuk menghapus file dari server.
+     * Dilengkapi verifikasi keamanan: File hanya bisa dihapus jika HTTP Header X-Node-Id 
+     * milik pengguna cocok dengan Node-ID di dalam file .owner file tersebut.
+     */
 
     static class DeleteFileHandler implements HttpHandler {
         @Override
@@ -639,6 +674,11 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler paling vital untuk streaming lagu. 
+     * Mendukung protokol HTTP 206 Partial Content yang memungkinkan audio player 
+     * di browser untuk melompati (seek) lagu tanpa harus mendownload keseluruhan file (anti-buffer).
+     */
     static class MusicServeHandler
     implements HttpHandler {
         MusicServeHandler() {
@@ -722,6 +762,9 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler untuk mendapatkan daftar semua Playlist yang pernah dibuat.
+     */
 
     static class PlaylistsListHandler
     implements HttpHandler {
@@ -761,6 +804,9 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler untuk membuat Playlist baru dan menyimpannya ke memori dan file .dat.
+     */
 
     static class PlaylistCreateHandler
     implements HttpHandler {
@@ -792,6 +838,9 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler untuk menambahkan lagu baru ke dalam Playlist tertentu.
+     */
 
     static class PlaylistAddSongHandler
     implements HttpHandler {
@@ -829,6 +878,9 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler untuk menghapus lagu dari dalam Playlist.
+     */
 
     static class PlaylistRemoveSongHandler
     implements HttpHandler {
@@ -862,6 +914,9 @@ public class IndexingServer {
             }
         }
     }
+    /**
+     * Handler untuk mengambil daftar lagu spesifik yang ada di dalam sebuah Playlist.
+     */
 
     static class PlaylistSongsHandler
     implements HttpHandler {
